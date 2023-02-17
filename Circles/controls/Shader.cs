@@ -1,4 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
+using System.Reflection.Metadata;
 
 namespace Circles.controls
 {
@@ -16,7 +18,7 @@ namespace Circles.controls
             string fragShaderSource = File.ReadAllText(Path.Join(curPath, fragShaderPath));
 
             int vertShader = GL.CreateShader(ShaderType.VertexShader);
-            int fragShader = GL.CreateShader(ShaderType.VertexShader);
+            int fragShader = GL.CreateShader(ShaderType.FragmentShader);
 
             GL.ShaderSource(vertShader, vertShaderSource);
             GL.ShaderSource(fragShader, fragShaderSource);
@@ -59,7 +61,10 @@ namespace Circles.controls
         {
             GL.UseProgram(Handle);
         }
-
+        public void setUniform(Matrix4 data, string uniformName)
+        {
+            GL.UniformMatrix4(GL.GetUniformLocation(Handle, uniformName), false, ref data);
+        }
         #region IDisposable
         ~Shader()
         {
