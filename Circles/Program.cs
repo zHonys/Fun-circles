@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            using (Game game = new Game(800, 800))
+            using (Game game = new Game(600, 600))
             {
                 game.Run(60);
             }
