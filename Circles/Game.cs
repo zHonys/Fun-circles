@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,17 @@ namespace Circles
     {
         Shader shader;
         Circle circle;
+        Ball ball;
 
         Matrix4 projection = Matrix4.Identity;
         public Game(int width, int heigth) : base(GameWindowSettings.Default, NativeWindowSettings.Default)
         {
             Size = new Vector2i(width, heigth);
 
+            Vector2 vez = new(8, 4);
             shader = new(@"shaders\lines.vert", @"shaders\lines.frag");
-            circle = new Circle(200, 4, 1, ((Vector4)Color4.Red).Xyz);
+            circle = new Circle(200, vez.X, vez.Y, ((Vector4)Color4.Red).Xyz);
+            ball = new Ball(100, vez.X, vez.Y);
         }
         protected override void OnLoad()
         {
@@ -34,6 +38,7 @@ namespace Circles
         {
             base.OnUpdateFrame(args);
             shader.Use();
+            ball.Update((float)GLFW.GetTime());
 
             shader.setUniform(projection, "projection");
         }
@@ -45,8 +50,8 @@ namespace Circles
             // Start Code
 
             shader.Use();
-            circle.draw(shader);
-
+            circle.Draw(shader);
+            ball.Draw(shader);
             // End Code
 
             SwapBuffers();
@@ -56,6 +61,7 @@ namespace Circles
             base.OnResize(e);
             //projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), e.Width / e.Height, 0.1f, 5);
             projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0.1f, 5);
+            projection = Matrix4.CreateScale(e.Height / 6, e.Height / 6, 1) * projection;
 
             GL.Viewport(0, 0, e.Width, e.Height);
         }

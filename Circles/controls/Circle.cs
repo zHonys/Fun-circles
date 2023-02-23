@@ -10,16 +10,17 @@ namespace Circles.controls
 {
     public class Circle
     {
-        int details;
+        protected int details;
 
         float xSpeed;
         float ySpeed;
 
         Vector3 color;
 
-        int VAO, VBO;
+        protected int VAO, VBO;
 
         Vector3[] lines;
+        protected Matrix4 model = Matrix4.Identity;
 
         public Circle(int detail, float xSpeed, float ySpeed, Vector3 linesColor)
         {
@@ -35,7 +36,7 @@ namespace Circles.controls
         private Vector3[] genPoints()
         {
             double pi = MathHelper.Pi;
-            List<double> dist = Enumerable.Range(0, details*2).Select(x => pi*x/(double)details).ToList();
+            List<double> dist = Enumerable.Range(0, details).Select(x => pi*x/((double)details/2)).ToList();
 
             Vector2d[] pos = dist.Select(n => new Vector2d(MathHelper.Cos(n*xSpeed), MathHelper.Sin(n*ySpeed))).ToArray();
 
@@ -57,12 +58,12 @@ namespace Circles.controls
 
             GL.BindVertexArray(0);
         }
-        public void draw(Shader shader)
+        public void Draw(Shader shader)
         {
             GL.BindVertexArray(VAO);
 
-            shader.setUniform(Matrix4.CreateScale(100, 100, 1), "model");
-            GL.DrawArrays(PrimitiveType.LineLoop, 0, details*2);
+            shader.setUniform(model, "model");
+            GL.DrawArrays(PrimitiveType.LineLoop, 0, details);
 
             GL.BindVertexArray(0);
         }
