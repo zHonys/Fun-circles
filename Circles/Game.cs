@@ -34,8 +34,7 @@ namespace Circles
         {
             base.OnUpdateFrame(args);
             shader.Use();
-            //projection = Matrix4.Identity;
-            Console.WriteLine(projection * new Vector4(0.7f, 0.7f, -1, 1));
+
             shader.setUniform(projection, "projection");
         }
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -46,7 +45,7 @@ namespace Circles
             // Start Code
 
             shader.Use();
-            circle.draw();
+            circle.draw(shader);
 
             // End Code
 
@@ -55,7 +54,9 @@ namespace Circles
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
-            projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), e.Width / (float)e.Height, 0.1f, 100);
+            //projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), e.Width / e.Height, 0.1f, 5);
+            projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0.1f, 5);
+
             GL.Viewport(0, 0, e.Width, e.Height);
         }
         public void Run(double UpdateCap)

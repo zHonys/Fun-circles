@@ -39,9 +39,7 @@ namespace Circles.controls
 
             Vector2d[] pos = dist.Select(n => new Vector2d(MathHelper.Cos(n*xSpeed), MathHelper.Sin(n*ySpeed))).ToArray();
 
-
-
-            return pos.Select(vec => new Vector3((float)vec.X, (float)vec.Y, -5f)).ToArray();
+            return pos.Select(vec => new Vector3((float)vec.X, (float)vec.Y, -1)).ToArray();
         }
         private unsafe void setUp()
         {
@@ -59,10 +57,11 @@ namespace Circles.controls
 
             GL.BindVertexArray(0);
         }
-        public void draw()
+        public void draw(Shader shader)
         {
             GL.BindVertexArray(VAO);
 
+            shader.setUniform(Matrix4.CreateScale(100, 100, 1), "model");
             GL.DrawArrays(PrimitiveType.LineLoop, 0, details*2);
 
             GL.BindVertexArray(0);
