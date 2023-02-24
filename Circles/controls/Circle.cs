@@ -11,18 +11,17 @@ namespace Circles.controls
     public class Circle
     {
         protected int details;
+        protected int VAO, VBO;
 
         float xSpeed;
         float ySpeed;
 
         Vector3 color;
 
-        protected int VAO, VBO;
-
         Vector3[] lines;
         protected Matrix4 model = Matrix4.Identity;
 
-        public Circle(int detail, float xSpeed, float ySpeed, Vector3 linesColor)
+        public Circle(int detail, float xSpeed, float ySpeed, Vector3 linesColor, Vector3 pos)
         {
             details = detail;
             this.xSpeed = xSpeed;
@@ -30,7 +29,7 @@ namespace Circles.controls
             color = linesColor;
 
             lines = genPoints();
-
+            model = Matrix4.CreateTranslation(pos);
             setUp();
         }
         private Vector3[] genPoints()

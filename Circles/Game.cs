@@ -15,22 +15,35 @@ namespace Circles
     public class Game : GameWindow
     {
         Shader shader;
-        Circle circle;
-        Ball ball;
+
+        List<Circle> circles;
+        List<Ball> balls;
 
         Matrix4 projection = Matrix4.Identity;
         public Game(int width, int heigth) : base(GameWindowSettings.Default, NativeWindowSettings.Default)
         {
             Size = new Vector2i(width, heigth);
 
-            Vector2 vez = new(8, 4);
+            Vector2 vez = new(1, 1);
             shader = new(@"shaders\lines.vert", @"shaders\lines.frag");
-            circle = new Circle(200, vez.X, vez.Y, ((Vector4)Color4.Red).Xyz);
-            ball = new Ball(100, vez.X, vez.Y);
+
+            circles = new();
+            balls = new();
         }
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            for(int i = 1; i <= 10; i++)
+            {
+                for(int j = 1; j <= 10; j++)
+                {
+                    Vector3 pos = new(i * 2 + ((i - 1) * 0.6f), j * 2 + ((j - 1) * 0.5f), -1);
+                    circles.Add(new(200, i, j, Vector3.One, pos));
+                    balls.Add(new(20, i, j, pos));
+                }
+            }
+
             GL.ClearColor(0.1f, 0.1f, 0.1f, 1);
         }
 
@@ -38,7 +51,9 @@ namespace Circles
         {
             base.OnUpdateFrame(args);
             shader.Use();
-            ball.Update((float)GLFW.GetTime());
+            balls.ForEach(ball => {
+                ball.Update((float)GLFW.GetTime());
+            });
 
             shader.setUniform(projection, "projection");
         }
@@ -50,8 +65,15 @@ namespace Circles
             // Start Code
 
             shader.Use();
-            circle.Draw(shader);
-            ball.Draw(shader);
+
+            circles.ForEach(circle =>
+            {
+                circle.Draw(shader);
+            });
+            balls.ForEach(ball =>
+            {
+                ball.Draw(shader);
+            });
             // End Code
 
             SwapBuffers();
@@ -60,8 +82,9 @@ namespace Circles
         {
             base.OnResize(e);
             //projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), e.Width / e.Height, 0.1f, 5);
-            projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0.1f, 5);
-            projection = Matrix4.CreateScale(e.Height / 6, e.Height / 6, 1) * projection;
+            //projection = Matrix4.CreateOrthographic(e.Width, e.Height, 0.1f, 5);
+            projection = Matrix4.CreateOrthographicOffCenter(0, e.Width, e.Height, 0, 0.1f, 5);
+            projection = Matrix4.CreateScale(e.Height / 26, e.Height / 26, 1) * projection;
 
             GL.Viewport(0, 0, e.Width, e.Height);
         }
